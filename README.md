@@ -1,2 +1,2 @@
-# MagicDoors
-Bukkit/Spigot repository which allows users to create doors and other portals which can only be used with "Magic"
+# ExampleBlockTyperPlugin
+Bukkit/Spigot plugin which uses the BlockTyperPlugin framework for logging and recipe creation.
