@@ -1,7 +1,7 @@
-name: MagicDoors
+name: Example
 version: 1.0.0
-main:  com.blocktyper.magicdoors.MagicDoorsPlugin
+main:  com.blocktyper.example.ExamplePlugin
 author: spaarkimus
 website: blocktyper.com
 database: false
-description: These doors are magic.
+description: This is an example.

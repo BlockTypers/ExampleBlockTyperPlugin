@@ -1,14 +1,18 @@
-package com.blocktyper.magicdoors;
+package com.blocktyper.example;
 
 import java.util.ResourceBundle;
 
 import com.blocktyper.plugin.BlockTyperPlugin;
 
-public class MagicDoorsPlugin extends BlockTyperPlugin {
+public class ExamplePlugin extends BlockTyperPlugin {
 
 	
 
-	public static final String RESOURCE_NAME = "com.blocktyper.magicdoors.resources.MagicDoorsMessages";
+	public static final String RESOURCE_NAME = "com.blocktyper.magicdoors.resources.ExampleMessages";
+	
+	public ExamplePlugin(){
+		super();
+	}
 	
 
 	public void onEnable() {
