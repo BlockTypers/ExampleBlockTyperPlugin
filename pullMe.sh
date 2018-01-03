@@ -1,3 +1,7 @@
 #!/bin/bash
-git clone https://github.com/spaarkimus/ExampleBlockTyperPlugin.git tempexample
-./tempexample/new.sh -n $1 $2
+uuid=exampe-$(uuidgen)
+git clone https://github.com/spaarkimus/ExampleBlockTyperPlugin.git $uuid
+cd $uuid
+./new.sh $1 $2
+mv target/projects/* ..
+rm -rf uuid

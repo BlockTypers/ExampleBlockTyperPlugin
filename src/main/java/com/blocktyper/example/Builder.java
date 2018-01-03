@@ -50,7 +50,8 @@ public class Builder {
         this.caps = name.toUpperCase().replace(" ", "_");
 
         File target = getRootFile("target");
-        this.projectDir = Files.createDirectories(Paths.get(target.getAbsolutePath(), tag)).toFile();
+        File projectsDir = Files.createDirectories(Paths.get(target.getAbsolutePath(), "projects")).toFile();
+        this.projectDir = Files.createDirectories(Paths.get(projectsDir.getAbsolutePath(), tag)).toFile();
         File srcDir = Files.createDirectories(Paths.get(projectDir.getAbsolutePath(), "src")).toFile();
         File mainDir = Files.createDirectories(Paths.get(srcDir.getAbsolutePath(), "main")).toFile();
         File javaDir = Files.createDirectories(Paths.get(mainDir.getAbsolutePath(), "java")).toFile();
