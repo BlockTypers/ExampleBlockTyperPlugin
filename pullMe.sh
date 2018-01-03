@@ -3,5 +3,6 @@ uuid=blocktyper-tmp-$(uuidgen)
 git clone https://github.com/spaarkimus/ExampleBlockTyperPlugin.git $uuid
 cd $uuid
 ./new.sh $1 $2
-mv target/projects/* ..
+cd ..
+mv $uuid/target/projects/* .
 rm -rf $uuid
