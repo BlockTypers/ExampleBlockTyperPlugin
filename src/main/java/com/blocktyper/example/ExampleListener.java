@@ -14,7 +14,7 @@ public class ExampleListener extends BlockTyperListener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void playerJoin(PlayerInteractEvent event) {
+	public void playerInteract(PlayerInteractEvent event) {
 		event.getPlayer().sendMessage("Example -  [" + (event.getClickedBlock() != null ? event.getClickedBlock().getType() : "") + "]");
 	}
 
