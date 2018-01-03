@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.blocktyper</groupId>
 	<artifactId>example</artifactId>
 	<version>1.0.0</version>
 	<name>Example</name>
-	
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -25,16 +25,23 @@
 			<version>1.12.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.blocktyper</groupId>
 			<artifactId>blocktyperplugin</artifactId>
 			<version>1.2.6</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple</artifactId>
+			<version>4.9</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
-	
-	
+
+
 	<build>
 		<resources>
 			<resource>
