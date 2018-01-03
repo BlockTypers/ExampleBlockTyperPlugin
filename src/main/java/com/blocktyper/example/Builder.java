@@ -39,8 +39,8 @@ public class Builder {
     private final File codeDir;
     private final File resourcesDir;
 
-    Builder(String name, String group) throws Exception {
-        this.name = name;
+    Builder(String inputName, String group) throws Exception {
+        this.name = cap(splitCamelCase(inputName.replace(" ", "")));
         this.group = group;
         this.files = Arrays.asList(new File(".").listFiles());
 
@@ -199,5 +199,20 @@ public class Builder {
         content = content.replaceAll("Example", noSpacesName);
         content = content.replaceAll("EXAMPLE", caps);
         return content;
+    }
+
+    private static String splitCamelCase(String s) {
+        return s.replaceAll(
+                String.format("%s|%s|%s",
+                        "(?<=[A-Z])(?=[A-Z][a-z])",
+                        "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ),
+                " "
+        );
+    }
+
+    private static String cap(String input) {
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 }
