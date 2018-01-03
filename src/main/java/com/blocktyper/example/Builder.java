@@ -15,74 +15,189 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Builder
-{
+public class Builder {
 
-    public static final String OS = System.getProperty( "os.name" );
-    public static final boolean IS_WINDOWS = OS.startsWith( "Windows" );
-    public static final File CWD = new File(".");
+    private final String name;
+    private final String group;
+    private final String noSpacesName;
+    private final String pkg;
+    private final String tag;
+    private final String caps;
+    private final List<File> files;
+    private final File projectDir;
+    private final File codeDir;
+    private final File resourcesDir;
 
-    public static void main(String[] args) throws Exception
-    {
+    Builder(String name, String group) throws Exception {
+        this.name = name;
+        this.group = group;
+        this.files = Arrays.asList(new File(".").listFiles());
 
+        this.noSpacesName = name.replace(" ", "");
+        this.pkg = name.replace(" ", "").toLowerCase();
+        this.tag = name.toLowerCase().replace(" ", "-");
+        this.caps = name.toUpperCase().replace(" ", "_");
 
+        File target = getRootFile("target");
+        this.projectDir = Files.createDirectories(Paths.get(target.getAbsolutePath(), tag)).toFile();
+        File srcDir = Files.createDirectories(Paths.get(projectDir.getAbsolutePath(), "src")).toFile();
+        File mainDir = Files.createDirectories(Paths.get(srcDir.getAbsolutePath(), "main")).toFile();
+        File javaDir = Files.createDirectories(Paths.get(mainDir.getAbsolutePath(), "java")).toFile();
+        this.resourcesDir = Files.createDirectories(Paths.get(mainDir.getAbsolutePath(), "resources")).toFile();
+
+        File codeDir = javaDir;
+        for(String part : group.split("\\.")) {
+            codeDir = Files.createDirectories(Paths.get(codeDir.getAbsolutePath(), part)).toFile();
+        }
+        codeDir = Files.createDirectories(Paths.get(codeDir.getAbsolutePath(), pkg)).toFile();
+        this.codeDir = codeDir;
+    }
+
+    public static void main(String[] args) throws Exception {
         OptionParser parser = new OptionParser();
-        OptionSpec<Void> flag = parser.accepts( "example-flag" );
-        //OptionSpec<String> root = parser.accepts( "root" ).withRequiredArg().defaultsTo( "." );
+        OptionSpec<String> groupName = parser.acceptsAll(Arrays.asList("g", "group")).withRequiredArg().defaultsTo("com.blocktyper");
+        OptionSpec<String> pluginName = parser.acceptsAll(Arrays.asList("n", "name")).withRequiredArg().defaultsTo("My Plugin");
+        OptionSet options = parser.parse(args);
 
-        OptionSpec<File> inputDir = parser.acceptsAll( Arrays.asList( "i", "input-dir" ) ).withRequiredArg().ofType( File.class ).defaultsTo( CWD );
-        OptionSpec<File> outputDir = parser.acceptsAll( Arrays.asList( "o", "output-dir" ) ).withRequiredArg().ofType( File.class ).defaultsTo( CWD );
 
-        OptionSet options = parser.parse( args );
+        Builder builder = new Builder(options.valueOf(pluginName), options.valueOf(groupName));
+        builder.createPlugin();
 
         System.out.println("Example Plugin Builder...");
-        System.out.println("OS: " + OS);
-        System.out.println("Windows: " + IS_WINDOWS);
-        System.out.println("Flag: " + options.has(flag));
-
-        printFileMeta(inputDir.value(options));
+        System.out.println("name: " + builder.name);
+        System.out.println("group: " + builder.group);
 
     }
 
-    private static void printFileMeta(File input) throws Exception{
-        for(File file : input.listFiles()){
-            System.out.println("file: " + file.getName());
-            if(file.getName().equals("pom.xml")) {
-                processPOM(file);
-            }
-        }
+
+    private void createPlugin() throws Exception {
+        processPOM();
+        copyRootFile(".gitignore");
+        copyRootFile("LICENSE");
+        copyRootFile("README.md");
+        copyRootFile("upgradeVersion");
+        copyRootFile("install.sh");
+        //copyRootFile("src");
+
+        File src = getRootFile("src");
+        File code = getSubFile(src, new ArrayList(Arrays.asList("main","java", "com", "blocktyper", "example")));
+        copyFiles(code, codeDir);
+
+        File resources = getSubFile(src, new ArrayList(Arrays.asList("main","resources")));
+        copyFiles(resources, resourcesDir);
+
     }
 
-    private static void processPOM(File pom) throws Exception{
+    private void copyRootFile(String name) throws Exception {
+        File source = getRootFile(name);
+        copyFiles(source, new File(projectDir, source.getName()));
+
+    }
+
+    private void processPOM() throws Exception {
+        File pom = getRootFile("pom.xml");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document document = dbf.newDocumentBuilder().parse(pom);
-        System.out.println("get pom");
 
         Element table = document.getDocumentElement();
 
+        for (int i = 0; i < table.getChildNodes().getLength(); i++) {
+            Node node = table.getChildNodes().item(i);
+            if ("groupId".equals(node.getNodeName())) {
+                node.getChildNodes().item(0).setNodeValue(group);
+            }
+            if ("artifactId".equals(node.getNodeName())) {
+                node.getChildNodes().item(0).setNodeValue(tag);
+            }
+            if ("name".equals(node.getNodeName())) {
+                node.getChildNodes().item(0).setNodeValue(name);
+            }
+        }
+
+
         NodeList dependencies = table.getElementsByTagName("dependency");
-        for(int i = 0; i < dependencies.getLength(); i++) {
+        for (int i = 0; i < dependencies.getLength(); i++) {
             Node dependency = dependencies.item(i);
             NodeList elements = dependency.getChildNodes();
-            for(int j = 0; j < elements.getLength(); j++) {
-                if("groupId".equals(elements.item(j).getNodeName())) {
+            for (int j = 0; j < elements.getLength(); j++) {
+                if ("groupId".equals(elements.item(j).getNodeName())) {
                     String groupId = elements.item(j).getChildNodes().item(0).getNodeValue();
-                    if("net.sf.jopt-simple".equals(groupId)){
+                    if ("net.sf.jopt-simple".equals(groupId)) {
                         dependency.getParentNode().removeChild(dependency);
                     }
                 }
             }
         }
 
-//------------------------------------------------------------------------
+        Node targetPath = table.getElementsByTagName("targetPath").item(0);
+        targetPath.getChildNodes().item(0).setNodeValue(group.replace(".", "/") + "/" + pkg + "/resources");
 
-// -------------- printing the resulting tree to the console -------------
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer t = tf.newTransformer();
-        t.transform(new DOMSource(document), new StreamResult(pom));
+        t.transform(new DOMSource(document), new StreamResult(new File(projectDir, pom.getName())));
+    }
+
+    private File getRootFile(String name) {
+        return files.stream().filter(f -> name.equals(f.getName())).findFirst().get();
+    }
+
+    private File getSubFile(File file, List<String> names) {
+        File subFile = (getSubFile(file, names.remove(0)));
+        if(names.isEmpty()) {
+            return subFile;
+        }
+        return getSubFile(subFile, names);
+    }
+
+    private File getSubFile(File file, String name) {
+        return Arrays.asList(file.listFiles()).stream().filter(f -> name.equals(f.getName())).findFirst().get();
     }
 
 
+    private void copyFiles(File source, File destination) throws IOException {
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                destination.mkdir();
+            }
+
+            String files[] = source.list();
+            for (String file : files) {
+                File srcFile = new File(source, file);
+                File destFile = new File(destination, file.replace("Example", noSpacesName));
+                copyFiles(srcFile, destFile);
+            }
+        } else {
+            if(!source.getName().endsWith(this.getClass().getSimpleName() + ".java")) {
+                Path path = Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Charset charset = StandardCharsets.UTF_8;
+
+                String content = new String(Files.readAllBytes(path), charset);
+                content = alterContent(source.getName(), content);
+                Files.write(path, content.getBytes(charset));
+            }
+        }
+    }
+
+    private String alterContent(String fileName, String content) {
+        content = content.replaceAll("package com.blocktyper", "package " + group);
+        content = content.replaceAll("main: com.blocktyper", "main: " + group);
+        content = content.replaceAll("\"com.blocktyper", "\"" + group);
+
+
+        content = content.replaceAll("example", pkg);
+        content = content.replaceAll("Example", noSpacesName);
+        content = content.replaceAll("EXAMPLE", caps);
+        return content;
+    }
 }
