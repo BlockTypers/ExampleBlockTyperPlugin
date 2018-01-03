@@ -6,13 +6,14 @@
 
 ############## DEBUG ##########################
 locale: en
-debug: false
+debug: true
 log.recipes.enable: true
 
 
 ############## RECIPES ############
 recipes:
   - example
+  - dependant-example
 
 
 ###############################################
@@ -21,16 +22,61 @@ recipes:
 
 
 ################## BEGIN Example Door ############
-recipe.example.name: Example Door
-recipe.example.rows: 
+recipe.example.name: Example Thing
+recipe.example.de.name: Example Thing (de)
+recipe.example.en.name: Example Thing (en)
+recipe.example.es.name: Example Thing (es)
+recipe.example.fr.name: Example Thing (fr)
+recipe.example.sv.name: Example Thing (sv)
+recipe.example.zh.name: Example Thing (zh)
+recipe.example.rows:
   - DDD
   - DID
   - DDD
-recipe.example.mats: 
+recipe.example.mats:
+  - D=DIAMOND
+  - I=IRON_DOOR
+recipe.example.output: IRON_DOOR
+
+
+
+################## BEGIN Dependant Door ############
+recipe.dependant-example.name: Dependant Example Thing
+recipe.dependant-example.de.name: Dependant Example Thing (de)
+recipe.dependant-example.en.name: Dependant Example Thing (en)
+recipe.dependant-example.es.name: Dependant Example Thing (es)
+recipe.dependant-example.fr.name: Dependant Example Thing (fr)
+recipe.dependant-example.sv.name: Dependant Example Thing (sv)
+recipe.dependant-example.zh.name: Dependant Example Thing (zh)
+
+recipe.dependant-example.rows:
+  - DDD
+  - DID
+  - DDD
+recipe.dependant-example.mats:
   - D=DIAMOND
   - I=IRON_DOOR
 recipe.root-door.output: IRON_DOOR
 
+recipe.dependant-example.item-has-nbt-key:
+  - 4=example
+recipe.dependant-example.keep:
+  - NYN
+  - NYN
+  - NNN
+recipe.dependant-example.op.only: true
+recipe.dependant-example.output: IRON_DOOR
+recipe.dependant-example.listeners:
+  - com.blocktyper.example.ExampleItemListener
+
+
+
+messages.example-command-message.de: You must be privileged de (user override)
+messages.example-command-message.en: You must be privileged en (user override)
+messages.example-command-message.es: You must be privileged es (user override)
+messages.example-command-message.fr: You must be privileged fr (user override)
+messages.example-command-message.sv: You must be privileged sv (user override)
+messages.example-command-message.zh: You must be privileged zh (user override)
 
 
 
@@ -47,9 +93,9 @@ recipe.root-door.output: IRON_DOOR
 
 
 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+

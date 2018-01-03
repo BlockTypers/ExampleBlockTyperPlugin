@@ -5,3 +5,6 @@ author: spaarkimus
 website: blocktyper.com
 database: false
 description: This is an example.
+commands:
+  example:
+    description: Example command!

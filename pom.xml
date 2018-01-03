@@ -22,28 +22,14 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.10.2-R0.1-SNAPSHOT</version>
+			<version>1.12.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
-		</dependency>
-		<!--Bukkit API -->
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.10.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.blocktyper.localehelper</groupId>
-			<artifactId>localehelper</artifactId>
-			<version>1.0.0</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.blocktyper</groupId>
 			<artifactId>blocktyperplugin</artifactId>
-			<version>1.0.7</version>
+			<version>1.2.6</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -52,7 +38,7 @@
 	<build>
 		<resources>
 			<resource>
-				<targetPath>com/blocktyper/magicdoors/resources</targetPath>
+				<targetPath>com/blocktyper/example/resources</targetPath>
 				<filtering>false</filtering>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
